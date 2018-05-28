@@ -1,0 +1,39 @@
+sudo: required
+
+language: bash
+services:
+  - docker
+
+branches:
+  only:
+  - master
+
+env:
+   global:
+    - COMMIT=${TRAVIS_COMMIT::8}
+   matrix: 
+    - VARIANT=httpie
+    - VARIANT=boom
+
+before_script:
+  - env | sort
+  - cd "$VARIANT"
+  - IMAGE="melvinlee/${VARIANT}"
+
+script:
+  - |
+    (
+      set -Eeuo pipefail
+      set -x
+        export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+        docker build -t "$IMAGE" .
+        docker tag $IMAGE $IMAGE:$TAG
+        docker tag $IMAGE $IMAGE:travis-$TRAVIS_BUILD_NUMBER
+    )
+  
+after_script:
+  - docker images
+
+after_success:
+  - docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_PASSWORD"
+  - docker push $IMAGE
