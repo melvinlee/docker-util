@@ -35,5 +35,5 @@ after_script:
   - docker images
 
 after_success:
-  - docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_PASSWORD"
+  - docker login --username "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
   - docker push $IMAGE
