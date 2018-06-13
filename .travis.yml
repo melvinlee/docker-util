@@ -15,6 +15,7 @@ env:
     - VARIANT=httpie
     - VARIANT=boom
     - VARIANT=serverless
+    - VARIANT=kubectl
 
 before_script:
   - env | sort
